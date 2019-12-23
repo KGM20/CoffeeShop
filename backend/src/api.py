@@ -79,6 +79,28 @@ def retrieve_drinks_detail(jwt):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def create_drink(jwt):
+    body = request.get_json()
+
+    title = body.get('title', None)
+    recipe = json.dumps(body.get('recipe', None))
+
+    drink = Drink(title=title, recipe=recipe)
+    long_drink = drink.long()
+
+    try:
+        drink.insert()
+
+        return jsonify({
+            'success': True,
+            'drinks': long_drink
+        }), 200
+
+    except:
+        abort(422)
+
 
 '''
 @TODO implement endpoint
