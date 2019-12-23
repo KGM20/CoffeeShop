@@ -80,6 +80,10 @@ def check_permissions(permission, payload):
             'description': 'Payload does not contain permissions.'
         }, 400)
 
+    elif not permission:
+
+        return True
+
     elif permission not in payload['permissions']:
         raise AuthError({
             'code': 'forbidden_method',

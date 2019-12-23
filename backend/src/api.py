@@ -4,7 +4,7 @@ from sqlalchemy import exc
 import json
 from flask_cors import CORS
 
-from .database.models import db_drop_and_create_all, setup_db, Drink
+from .database.models import db_drop_and_create_all, setup_db, db, Drink
 from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ CORS(app)
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
     return response
 
 '''
@@ -34,6 +34,18 @@ def after_request(response):
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+
+@app.route('/drinks', methods=['GET'])
+@requires_auth()
+def retrieve_drinks(jwt):
+
+    drinks = db.session.query(Drink).order_by(Drink.id).all()
+    short_drinks = [drink.short() for drink in drinks]
+
+    return jsonify({
+        'success': True,
+        'drinks': short_drinks
+    }), 200
 
 
 '''
