@@ -36,8 +36,7 @@ def after_request(response):
 '''
 
 @app.route('/drinks', methods=['GET'])
-@requires_auth()
-def retrieve_drinks(jwt):
+def retrieve_drinks():
 
     drinks = db.session.query(Drink).order_by(Drink.id).all()
     short_drinks = [drink.short() for drink in drinks]
@@ -56,6 +55,18 @@ def retrieve_drinks(jwt):
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+
+@app.route('/drinks-detail', methods=['GET'])
+@requires_auth('get:drinks-detail')
+def retrieve_drinks_detail(jwt):
+
+    drinks = db.session.query(Drink).order_by(Drink.id).all()
+    long_drinks = [drink.long() for drink in drinks]
+
+    return jsonify({
+        'success': True,
+        'drinks': long_drinks
+    }), 200
 
 
 '''
