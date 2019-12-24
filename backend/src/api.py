@@ -116,7 +116,7 @@ def create_drink(jwt):
 
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('post:drinks')
-def update_a_drinl(jwt, drink_id):
+def update_drink(jwt, drink_id):
     body = request.get_json()
 
     title = body.get('title', None)
@@ -153,6 +153,25 @@ def update_a_drinl(jwt, drink_id):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks/<int:drink_id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
+def delete_drink(jwt, drink_id):
+
+    drink = db.session.query(Drink).get(drink_id)
+
+    if drink is None:
+        abort(404)
+
+    try:
+        drink.delete()
+
+        return jsonify({
+            'success': True,
+            'delete': drink_id
+        }), 200
+
+    except:
+        abort(422)
 
 ## Error Handling
 '''
