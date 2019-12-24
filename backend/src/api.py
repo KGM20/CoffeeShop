@@ -114,6 +114,33 @@ def create_drink(jwt):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+@requires_auth('post:drinks')
+def update_a_drinl(jwt, drink_id):
+    body = request.get_json()
+
+    title = body.get('title', None)
+    recipe = json.dumps(body.get('recipe', None))
+
+    drink = db.session.query(Drink).get(drink_id)
+
+    if drink is None:
+        abort(404)
+
+    try:
+        drink.title = title
+        drink.recipe = recipe
+
+        drink.update()
+        long_drink = drink.long()
+
+        return jsonify({
+            'success': True,
+            'drinks': long_drink
+        }), 200
+
+    except:
+        abort(422)
 
 '''
 @TODO implement endpoint
