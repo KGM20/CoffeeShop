@@ -266,6 +266,7 @@ The API handles the following error codes:
 
 #### POST /drinks
 
+- This endpoint is exclusively for sessions with Manager role.
 - Returns the drink object that was created in JSON format and a success argument.
 - Request Arguments: A JSON object with the title of the drink and its recipe.
 - Sample: `curl -X POST http://127.0.0.1:5000/drinks -H "Content-Type: application/json" -d '{"title": "Water3", "recipe": { "name": "Water", "color": "blue", "parts": 1}}'`
@@ -286,6 +287,7 @@ The API handles the following error codes:
 
 #### PATCH /drinks/integer:drink_id
 
+- This endpoint is exclusively for sessions with Manager role.
 - Returns the drink object that was modified given the id on the URL in JSON format and a success argument.
 - Request Arguments: A JSON object with the title of the drink and its recipe.
 - Sample: `curl -X PATCH http://127.0.0.1:5000/drinks/7 -H "Content-Type: application/json" -d '{"title": "Water5", "recipe": { "name": "Water", "color": "blue", "parts": 1}}'`
@@ -306,6 +308,7 @@ The API handles the following error codes:
 
 #### DELETE /drinks/integer:drink_id
 
+- This endpoint is exclusively for sessions with Manager role.
 - Deletes a drink that matches the given id on the URL. Returns the id of the deleted drink and a success value.
 - Request Arguments: None
 - Sample: `curl -X DELETE http://127.0.0.1:5000//drinks/5`
