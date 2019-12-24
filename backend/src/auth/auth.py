@@ -35,27 +35,31 @@ def get_token_auth_header():
     auth = request.headers.get('Authorization', None)
     if not auth:
         raise AuthError({
-            'code': 'authorization_header_missing',
-            'description': 'Authorization header is expected.'
+            "success": False, 
+            "error": 401,
+            "message": "Authorization header is expected."
         }, 401)
 
     parts = auth.split()
     if parts[0].lower() != 'bearer':
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Authorization header must start with "Bearer".'
+            "success": False, 
+            "error": 401,
+            "message": "Authorization header must start with 'Bearer'."
         }, 401)
 
     elif len(parts) == 1:
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Token not found.'
+            "success": False, 
+            "error": 401,
+            "message": "Token not found."
         }, 401)
 
     elif len(parts) > 2:
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Authorization header must be bearer token.'
+            "success": False, 
+            "error": 401,
+            "message": "Authorization header must be bearer token."
         }, 401)
 
     token = parts[1]
@@ -76,14 +80,16 @@ def get_token_auth_header():
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
         raise AuthError({
-            'code': 'permissions_missing',
-            'description': 'Payload does not contain permissions.'
+            "success": False, 
+            "error": 400,
+            "message": "Payload does not contain permissions."
         }, 400)
 
-    elif permission in payload['permissions']:
+    elif permission not in payload['permissions']:
         raise AuthError({
-            'code': 'forbidden_method',
-            'description': 'Token has not the required permission.'
+            "success": False, 
+            "error": 403,
+            "message": "Token has not the required persmission."
         }, 403)
 
     return True
@@ -109,8 +115,9 @@ def verify_decode_jwt(token):
     rsa_key = {}
     if 'kid' not in unverified_header:
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Authorization malformed.'
+            "success": False, 
+            "error": 401,
+            "message": "Authorization malformed."
         }, 401)
 
     for key in jwks['keys']:
@@ -136,24 +143,27 @@ def verify_decode_jwt(token):
 
         except jwt.ExpiredSignatureError:
             raise AuthError({
-                'code': 'token_expired',
-                'description': 'Token has expired.'
+                "success": False, 
+                "error": 401,
+                "message": "Token has expired."
             }, 401)
-
         except jwt.JWTClaimsError:
             raise AuthError({
-                'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                "success": False, 
+                "error": 401,
+                "message": "Incorrect claims. Please, check the audience and issuer."
             }, 401)
         except Exception:
             raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Unable to parse authentication token.'
+                "success": False, 
+                "error": 400,
+                "message": "Unable to parse authentication token."
             }, 400)
     raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Unable to find the appropriate key.'
-            }, 400)
+        "success": False, 
+        "error": 400,
+        "message": "Unable to find the appropriate key."
+    }, 400)
     # raise Exception('Not Implemented')
 
 '''
