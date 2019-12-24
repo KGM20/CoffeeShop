@@ -178,12 +178,12 @@ def delete_drink(jwt, drink_id):
 Example error handling for unprocessable entity
 '''
 @app.errorhandler(422)
-def unprocessable(error):
+def unprocessable_entity(error):
     return jsonify({
-                    "success": False, 
-                    "error": 422,
-                    "message": "unprocessable"
-                    }), 422
+        "success": False, 
+        "error": 422,
+        "message": "Unprocessable Entity"
+    }), 422
 
 '''
 @TODO implement error handlers using the @app.errorhandler(error) decorator
@@ -195,7 +195,13 @@ def unprocessable(error):
                     }), 404
 
 '''
-
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False, 
+        "error": 404,
+        "message": "Resource Not Found"
+    }), 404
 '''
 @TODO implement error handler for 404
     error handler should conform to general task above 
