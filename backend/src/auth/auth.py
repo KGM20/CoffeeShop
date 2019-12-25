@@ -9,21 +9,32 @@ AUTH0_DOMAIN = 'dev-kgm20.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'coffee'
 
-# AuthError Exception
-'''
-AuthError Exception
-A standardized way to communicate auth failure modes
-'''
-
 
 class AuthError(Exception):
+    """
+    AuthError Exception
+    A standardized way to communicate auth failure modes
+    """
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
 
 def get_token_auth_header():
+    """
+    This method obtains the JWT recevied on the Authorization headers.
 
+    We ensure the header is an authorization bearer token and then obtain the
+    JWT from it.
+
+    Parameters:
+    Authorization (string): This is the auth0 Bearer Token that corresponds
+                            to the current user session Authorization header.
+
+    Returns:
+    token (string): This is the encoded JWT provided by our auth0 server.
+
+    """
     auth = request.headers.get('Authorization', None)
     if not auth:
         raise AuthError({
@@ -59,6 +70,21 @@ def get_token_auth_header():
 
 
 def check_permissions(permission, payload):
+    """
+    This method ensures that the current session has the permission to perform
+    an specific action.
+
+    Parameters:
+    permission (string): This is the permission required to perform the action
+                         that called this method before it begins to work
+
+    payload (string): The payload contains the permissions from the current
+                      session
+
+    Returns:
+    True (boolean): This means the session has the required permission
+
+    """
     if 'permissions' not in payload:
         raise AuthError({
             "success": False,
@@ -77,6 +103,22 @@ def check_permissions(permission, payload):
 
 
 def verify_decode_jwt(token):
+    """
+    This method ensures that the received JWT is valid an decode it.
+
+    First, the functions reads the JSON Web Key Set (JWKS) containing the
+    public keys to verify any JSON Web Token (JWT) issued by our authorization
+    server. Then, after the JWT was successfully verified,we create a payload
+    that contatins the decrypted JWT using the RSA key to decode it.
+
+    Parameters:
+    token (string): This is the auth0 encoded JWT obtained as the result from
+                    the get_token_auth_header() method.
+
+    Returns:
+    payload (string): This is the decoded JWT that was originally received.
+
+    """
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
