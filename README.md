@@ -311,7 +311,7 @@ The API handles the following error codes:
 - This endpoint is exclusively for sessions with Manager role.
 - Deletes a drink that matches the given id on the URL. Returns the id of the deleted drink and a success value.
 - Request Arguments: None
-- Sample: `curl -X DELETE http://127.0.0.1:5000//drinks/5`
+- Sample: `curl -X DELETE http://127.0.0.1:5000/drinks/5`
  ```
 {
   "delete": 5,
